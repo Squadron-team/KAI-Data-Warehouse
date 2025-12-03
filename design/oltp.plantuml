@@ -1,0 +1,88 @@
+@startuml
+!theme plain
+
+entity "Train" as Train {
+  * train_id : int <<PK>>
+  --
+  model_name : varchar
+  train_type : varchar
+  capacity : int
+  manufacture_year : int
+}
+
+entity "Station" as Station {
+  * station_id : int <<PK>>
+  --
+  station_code : varchar
+  station_name : varchar
+  city : varchar
+  region : varchar
+}
+
+entity "Route" as Route {
+  * route_id : int <<PK>>
+  --
+  route_name : varchar
+  origin_station_id : int <<FK>>
+  destination_station_id : int <<FK>>
+  distance_km : int
+}
+
+entity "TrainSchedule" as TrainSchedule {
+  * schedule_id : int <<PK>>
+  --
+  train_id : int <<FK>>
+  route_id : int <<FK>>
+  departure_time : datetime
+  arrival_time : datetime
+}
+
+entity "Trip" as Trip {
+  * trip_id : int <<PK>>
+  --
+  schedule_id : int <<FK>>
+  actual_departure : datetime
+  actual_arrival : datetime
+  delay_minutes : int
+  status : varchar  // e.g. completed, cancelled, delayed
+}
+
+entity "Passenger" as Passenger {
+  * passenger_id : int <<PK>>
+  --
+  full_name : varchar
+  phone : varchar
+  gender : varchar
+}
+
+entity "Ticket" as Ticket {
+  * ticket_id : int <<PK>>
+  --
+  trip_id : int <<FK>>
+  passenger_id : int <<FK>>
+  purchase_time : datetime
+  seat_number : varchar
+  price : decimal
+  payment_method : varchar
+}
+
+entity "Maintenance" as Maintenance {
+  * maintenance_id : int <<PK>>
+  --
+  train_id : int <<FK>>
+  maintenance_date : datetime
+  maintenance_type : varchar
+  description : text
+  technician_name : varchar
+}
+
+' Relationships
+Train }o--o{ TrainSchedule : "has schedules"
+TrainSchedule ||--|| Trip : "actual trip"
+Route ||--o{ TrainSchedule : "schedule uses route"
+Station ||--o{ Route : "origin / dest"
+Passenger ||--o{ Ticket : "buys"
+Trip ||--o{ Ticket : "has tickets"
+Train ||--o{ Maintenance : "maintained"
+
+@enduml

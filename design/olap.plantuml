@@ -1,0 +1,216 @@
+@startuml
+!theme plain
+
+title Data Warehouse - KPI Perkeretaapian Indonesia
+
+' ======================================
+' Dimension Tables
+' ======================================
+
+entity "DimDate" as DimDate <<D>> {
+  + date_id : int <<PK>>
+  --
+  date_value : date
+  day : int
+  month : int
+  quarter : int
+  year : int
+  week_of_year : int
+  is_weekend : boolean
+}
+
+entity "DimTrain" as DimTrain <<D>> {
+  + train_id : int <<PK>>
+  --
+  train_name : varchar
+  train_type : varchar
+  capacity : int
+  manufacture_year : int
+}
+
+entity "DimRoute" as DimRoute <<D>> {
+  + route_id : int <<PK>>
+  --
+  route_name : varchar
+  origin_station_id : int <<FK>>
+  destination_station_id : int <<FK>>
+  distance_km : int
+}
+
+entity "DimStation" as DimStation <<D>> {
+  + station_id : int <<PK>>
+  --
+  station_code : varchar
+  station_name : varchar
+  city : varchar
+  region : varchar
+}
+
+entity "DimPassenger" as DimPassenger <<D>> {
+  + passenger_id : int <<PK>>
+  --
+  full_name : varchar
+  gender : varchar
+  age_group : varchar
+}
+
+entity "DimPaymentMethod" as DimPaymentMethod <<D>> {
+  + payment_method_id : int <<PK>>
+  --
+  method_name : varchar
+}
+
+entity "DimComponent" as DimComponent <<D>> {
+  + component_id : int <<PK>>
+  --
+  component_name : varchar
+  category : varchar
+}
+
+entity "DimMaintenanceType" as DimMaintenanceType <<D>> {
+  + maintenance_type_id : int <<PK>>
+  --
+  type_name : varchar  -- Preventive / Corrective
+}
+
+entity "DimTechnician" as DimTechnician <<D>> {
+  + technician_id : int <<PK>>
+  --
+  technician_name : varchar
+  skill_level : varchar
+}
+
+
+' ======================================
+' Fact Table 1: Total Ticket Revenue
+' ======================================
+
+entity "FactTicketSales" as FactTicketSales <<F>> {
+  + ticket_sales_id : int <<PK>>
+  --
+  date_id : int <<FK>>
+  train_id : int <<FK>>
+  route_id : int <<FK>>
+  passenger_id : int <<FK>>
+  payment_method_id : int <<FK>>
+  origin_station_id : int <<FK>>
+  destination_station_id : int <<FK>>
+  --
+  ticket_count : int
+  revenue : decimal
+}
+
+
+' ======================================
+' Fact Table 2: Passenger Load Factor
+' ======================================
+
+entity "FactPassengerLoad" as FactPassengerLoad <<F>> {
+  + passenger_load_id : int <<PK>>
+  --
+  date_id : int <<FK>>
+  train_id : int <<FK>>
+  route_id : int <<FK>>
+  trip_id : int
+  --
+  passenger_count : int
+  seat_capacity : int
+  load_factor : decimal
+}
+
+
+' ======================================
+' Fact Table 3: Operational Performance (OTP)
+' ======================================
+
+entity "FactOperationalPerformance" as FactOperationalPerformance <<F>> {
+  + operational_perf_id : int <<PK>>
+  --
+  date_id : int <<FK>>
+  train_id : int <<FK>>
+  route_id : int <<FK>>
+  origin_station_id : int <<FK>>
+  destination_station_id : int <<FK>>
+  --
+  scheduled_departure : datetime
+  actual_departure : datetime
+  scheduled_arrival : datetime
+  actual_arrival : datetime
+  departure_delay_minutes : int
+  arrival_delay_minutes : int
+  is_ontime : boolean
+}
+
+
+' ======================================
+' Fact Table 4: Maintenance (MTTR)
+' ======================================
+
+entity "FactMaintenance" as FactMaintenance <<F>> {
+  + maintenance_id : int <<PK>>
+  --
+  date_id : int <<FK>>
+  train_id : int <<FK>>
+  component_id : int <<FK>>
+  maintenance_type_id : int <<FK>>
+  technician_id : int <<FK>>
+  --
+  repair_time_hours : decimal
+  downtime_hours : decimal
+  schedule_status : varchar
+}
+
+
+' ======================================
+' Relationships
+' ======================================
+
+' FactTicketSales
+DimDate ||--o{ FactTicketSales : "date_id"
+DimTrain ||--o{ FactTicketSales : "train_id"
+DimRoute ||--o{ FactTicketSales : "route_id"
+DimPassenger ||--o{ FactTicketSales : "passenger_id"
+DimPaymentMethod ||--o{ FactTicketSales : "payment_method_id"
+DimStation ||--o{ FactTicketSales : "origin_station_id"
+DimStation ||--o{ FactTicketSales : "destination_station_id"
+
+' FactPassengerLoad
+DimDate ||--o{ FactPassengerLoad : "date_id"
+DimTrain ||--o{ FactPassengerLoad : "train_id"
+DimRoute ||--o{ FactPassengerLoad : "route_id"
+
+' FactOperationalPerformance
+DimDate ||--o{ FactOperationalPerformance : "date_id"
+DimTrain ||--o{ FactOperationalPerformance : "train_id"
+DimRoute ||--o{ FactOperationalPerformance : "route_id"
+DimStation ||--o{ FactOperationalPerformance : "origin_station_id"
+DimStation ||--o{ FactOperationalPerformance : "destination_station_id"
+
+' FactMaintenance
+DimDate ||--o{ FactMaintenance : "date_id"
+DimTrain ||--o{ FactMaintenance : "train_id"
+DimComponent ||--o{ FactMaintenance : "component_id"
+DimMaintenanceType ||--o{ FactMaintenance : "maintenance_type_id"
+DimTechnician ||--o{ FactMaintenance : "technician_id"
+
+' DimRoute → Station
+DimStation ||--o{ DimRoute : "origin_station"
+DimStation ||--o{ DimRoute : "destination_station"
+
+note top of FactTicketSales
+  KPI: Total Ticket Revenue
+end note
+
+note top of FactPassengerLoad
+  KPI: Load Factor
+end note
+
+note top of FactOperationalPerformance
+  KPI: On-Time Performance (OTP)
+end note
+
+note top of FactMaintenance
+  KPI: Mean Time To Repair (MTTR)
+end note
+
+@enduml
