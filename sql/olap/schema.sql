@@ -32,9 +32,10 @@ CREATE TABLE DIM_TRAIN (
     train_type VARCHAR(50),
     capacity INT,
     manufacture_year INT,
-    effective_date DATE,
-    end_date DATE,
-    is_current BOOLEAN
+
+    effective_date DATE NOT NULL,
+    end_date DATE NOT NULL DEFAULT '9999-12-31',
+    is_current BOOLEAN NOT NULL DEFAULT 1
 ) ENGINE=InnoDB;
 
 -- -------------------------
@@ -61,9 +62,10 @@ CREATE TABLE DIM_ROUTE (
     destination_station_name VARCHAR(100),
     destination_city VARCHAR(100),
     distance_km INT,
-    effective_date DATE,
-    end_date DATE,
-    is_current BOOLEAN
+
+    effective_date DATE NOT NULL,
+    end_date DATE NOT NULL DEFAULT '9999-12-31',
+    is_current BOOLEAN NOT NULL DEFAULT 1
 ) ENGINE=InnoDB;
 
 -- -------------------------
