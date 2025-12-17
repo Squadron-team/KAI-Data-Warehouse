@@ -1,13 +1,10 @@
 # KAI Data Warehouse
 
-<figure>
-  <img src="docs/kai-cc206.png" alt="KAI visualization">
-  <figcaption>
-    <i>
-        Kereta Api Indonesia (KAI) — AI-generated image by Google Gemini.
-    </i>
-  </figcaption>
-</figure>
+<p align="center">
+  <img src="docs/kai-cc206.png" alt="KAI visualization"><br>
+  <i>Kereta Api Indonesia (KAI) — AI-generated image by Google Gemini.</i>
+</p>
+
 
 
 A business intelligence case study that designs an OLTP-to-OLAP data warehouse
