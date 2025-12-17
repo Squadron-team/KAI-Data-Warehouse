@@ -58,6 +58,7 @@ erDiagram
         varchar seat_number
         decimal price
         varchar payment_method
+        varchar status
     }
 
     MAINTENANCE {
