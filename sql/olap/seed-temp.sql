@@ -90,13 +90,13 @@ VALUES
 
 INSERT INTO DIM_ROUTE
     (
-    route_id, route_name, origin_station_id, destination_station_id, distance_km,
+    route_id, route_name, origin_station_name, origin_city, destination_station_name, destination_city, distance_km,
     effective_date, end_date, is_current
     )
 VALUES
-    (1, 'Jakarta - Bandung', 1, 2, 150, '2020-01-01', NULL, TRUE),
-    (2, 'Jakarta - Yogyakarta', 1, 3, 560, '2020-01-01', NULL, TRUE),
-    (3, 'Jakarta - Surabaya', 1, 4, 725, '2020-01-01', NULL, TRUE);
+    (1, 'Jakarta - Bandung', 'Gambir', 'Jakarta', 'Bandung', 'Bandung', 150, '2020-01-01', NULL, TRUE),
+    (2, 'Jakarta - Yogyakarta', 'Gambir', 'Jakarta', 'Yogyakarta', 'Yogyakarta', 560, '2020-01-01', NULL, TRUE),
+    (3, 'Jakarta - Surabaya', 'Gambir', 'Jakarta', 'Surabaya Gubeng', 'Surabaya', 725, '2020-01-01', NULL, TRUE);
 
 
 -- -------------------------

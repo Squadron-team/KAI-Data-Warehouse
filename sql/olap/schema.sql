@@ -45,22 +45,16 @@ CREATE TABLE DIM_STATION (
 ) ENGINE=InnoDB;
 
 -- -------------------------
--- DIM_ROUTE (Snowflake to Station)
+-- DIM_ROUTE
 -- -------------------------
 CREATE TABLE DIM_ROUTE (
     route_id INT PRIMARY KEY,
     route_name VARCHAR(100),
-    origin_station_id INT,
-    destination_station_id INT,
-    distance_km INT,
-
-    CONSTRAINT fk_dim_route_origin
-        FOREIGN KEY (origin_station_id)
-        REFERENCES DIM_STATION(station_id),
-
-    CONSTRAINT fk_dim_route_destination
-        FOREIGN KEY (destination_station_id)
-        REFERENCES DIM_STATION(station_id)
+    origin_station_name VARCHAR(100),
+    origin_city VARCHAR(100),
+    destination_station_name VARCHAR(100),
+    destination_city VARCHAR(100),
+    distance_km INT
 ) ENGINE=InnoDB;
 
 -- -------------------------
