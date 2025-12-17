@@ -87,7 +87,8 @@ CREATE TABLE PASSENGER (
     passenger_id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
     phone VARCHAR(20),
-    gender VARCHAR(10)
+    gender VARCHAR(10),
+    age INT
 ) ENGINE=InnoDB;
 
 -- =====================================================

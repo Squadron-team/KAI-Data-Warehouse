@@ -64,13 +64,13 @@ VALUES
 -- PASSENGER
 -- =====================================================
 INSERT INTO PASSENGER
-    (full_name, phone, gender)
+    (full_name, phone, gender, age)
 VALUES
-    ('Andi Saputra', '081234567001', 'Male'),
-    ('Budi Santoso', '081234567002', 'Male'),
-    ('Citra Lestari', '081234567003', 'Female'),
-    ('Dewi Anggraini', '081234567004', 'Female'),
-    ('Eko Prasetyo', '081234567005', 'Male');
+    ('Andi Saputra', '081234567001', 'Male', 21),
+    ('Budi Santoso', '081234567002', 'Male', 32),
+    ('Citra Lestari', '081234567003', 'Female', 19),
+    ('Dewi Anggraini', '081234567004', 'Female', 26),
+    ('Eko Prasetyo', '081234567005', 'Male', 43);
 
 -- =====================================================
 -- TICKET

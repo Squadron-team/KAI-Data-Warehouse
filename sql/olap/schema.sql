@@ -73,8 +73,9 @@ CREATE TABLE DIM_PASSENGER (
     passenger_sk INT AUTO_INCREMENT PRIMARY KEY,
     passenger_id INT,
     full_name VARCHAR(100),
+    phone VARCHAR(20),
     gender VARCHAR(10),
-    age_group VARCHAR(20)
+    age INT
 ) ENGINE=InnoDB;
 
 -- -------------------------
@@ -102,8 +103,7 @@ CREATE TABLE DIM_COMPONENT (
 -- DIM_MAINTENANCE_TYPE
 -- -------------------------
 CREATE TABLE DIM_MAINTENANCE_TYPE (
-    maintenance_type_sk INT AUTO_INCREMENT PRIMARY KEY,
-    maintenance_type_id INT,
+    maintenance_type_id INT AUTO_INCREMENT PRIMARY KEY,
     type_name VARCHAR(50)
 ) ENGINE=InnoDB;
 
@@ -196,7 +196,7 @@ CREATE TABLE FACT_MAINTENANCE (
     date_id INT NOT NULL,
     train_sk INT NOT NULL,
     component_sk INT NOT NULL,
-    maintenance_type_sk INT NOT NULL,
+    maintenance_type_id INT NOT NULL,
     technician_sk INT NOT NULL,
     repair_time_hours DECIMAL(6,2),
     downtime_hours DECIMAL(6,2),
@@ -205,7 +205,7 @@ CREATE TABLE FACT_MAINTENANCE (
     FOREIGN KEY (date_id) REFERENCES DIM_DATE(date_id),
     FOREIGN KEY (train_sk) REFERENCES DIM_TRAIN(train_sk),
     FOREIGN KEY (component_sk) REFERENCES DIM_COMPONENT(component_sk),
-    FOREIGN KEY (maintenance_type_sk) REFERENCES DIM_MAINTENANCE_TYPE(maintenance_type_sk),
+    FOREIGN KEY (maintenance_type_id) REFERENCES DIM_MAINTENANCE_TYPE(maintenance_type_id),
     FOREIGN KEY (technician_sk) REFERENCES DIM_TECHNICIAN(technician_sk)
 ) ENGINE=InnoDB;
 
