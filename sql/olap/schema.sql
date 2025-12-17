@@ -81,8 +81,7 @@ CREATE TABLE DIM_PASSENGER (
 -- DIM_PAYMENT_METHOD
 -- -------------------------
 CREATE TABLE DIM_PAYMENT_METHOD (
-    payment_method_sk INT AUTO_INCREMENT PRIMARY KEY,
-    payment_method_id INT,
+    payment_method_id INT AUTO_INCREMENT PRIMARY KEY,
     method_name VARCHAR(50)
 ) ENGINE=InnoDB;
 
@@ -131,7 +130,7 @@ CREATE TABLE FACT_TICKET_SALES (
     train_sk INT NOT NULL,
     route_sk INT NOT NULL,
     passenger_sk INT NOT NULL,
-    payment_method_sk INT NOT NULL,
+    payment_method_id INT NOT NULL,
     origin_station_sk INT NOT NULL,
     destination_station_sk INT NOT NULL,
     ticket_count INT,
@@ -141,7 +140,7 @@ CREATE TABLE FACT_TICKET_SALES (
     FOREIGN KEY (train_sk) REFERENCES DIM_TRAIN(train_sk),
     FOREIGN KEY (route_sk) REFERENCES DIM_ROUTE(route_sk),
     FOREIGN KEY (passenger_sk) REFERENCES DIM_PASSENGER(passenger_sk),
-    FOREIGN KEY (payment_method_sk) REFERENCES DIM_PAYMENT_METHOD(payment_method_sk),
+    FOREIGN KEY (payment_method_id) REFERENCES DIM_PAYMENT_METHOD(payment_method_id),
     FOREIGN KEY (origin_station_sk) REFERENCES DIM_STATION(station_sk),
     FOREIGN KEY (destination_station_sk) REFERENCES DIM_STATION(station_sk)
 ) ENGINE=InnoDB;
