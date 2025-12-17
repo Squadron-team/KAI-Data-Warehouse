@@ -16,7 +16,7 @@ VALUES
 -- STATION
 -- =====================================================
 INSERT INTO STATION
-    (station_code, station_name, city, region)
+    (station_code, station_name, city, province)
 VALUES
     ('GMR', 'Gambir', 'Jakarta', 'DKI Jakarta'),
     ('BD', 'Bandung', 'Bandung', 'West Java'),

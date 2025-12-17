@@ -46,7 +46,7 @@ CREATE TABLE DIM_STATION (
     station_code VARCHAR(10),
     station_name VARCHAR(100),
     city VARCHAR(100),
-    region VARCHAR(100)
+    province VARCHAR(100)
 ) ENGINE=InnoDB;
 
 -- -------------------------

@@ -23,7 +23,7 @@ CREATE TABLE STATION (
     station_code VARCHAR(10) NOT NULL UNIQUE,
     station_name VARCHAR(100) NOT NULL,
     city VARCHAR(100),
-    region VARCHAR(100)
+    province VARCHAR(100)
 ) ENGINE=InnoDB;
 
 -- =====================================================
