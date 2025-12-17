@@ -111,10 +111,8 @@ CREATE TABLE DIM_MAINTENANCE_TYPE (
 -- DIM_TECHNICIAN
 -- -------------------------
 CREATE TABLE DIM_TECHNICIAN (
-    technician_sk INT AUTO_INCREMENT PRIMARY KEY,
-    technician_id INT,
-    technician_name VARCHAR(100),
-    skill_level VARCHAR(50)
+    technician_id INT AUTO_INCREMENT PRIMARY KEY,
+    technician_name VARCHAR(100)
 ) ENGINE=InnoDB;
 
 -- =====================================================
@@ -197,7 +195,7 @@ CREATE TABLE FACT_MAINTENANCE (
     train_sk INT NOT NULL,
     component_sk INT NOT NULL,
     maintenance_type_id INT NOT NULL,
-    technician_sk INT NOT NULL,
+    technician_id INT NOT NULL,
     repair_time_hours DECIMAL(6,2),
     downtime_hours DECIMAL(6,2),
     schedule_status VARCHAR(30),
@@ -206,7 +204,7 @@ CREATE TABLE FACT_MAINTENANCE (
     FOREIGN KEY (train_sk) REFERENCES DIM_TRAIN(train_sk),
     FOREIGN KEY (component_sk) REFERENCES DIM_COMPONENT(component_sk),
     FOREIGN KEY (maintenance_type_id) REFERENCES DIM_MAINTENANCE_TYPE(maintenance_type_id),
-    FOREIGN KEY (technician_sk) REFERENCES DIM_TECHNICIAN(technician_sk)
+    FOREIGN KEY (technician_id) REFERENCES DIM_TECHNICIAN(technician_id)
 ) ENGINE=InnoDB;
 
 -- =====================================================
