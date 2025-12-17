@@ -90,13 +90,9 @@ CREATE TABLE DIM_PAYMENT_METHOD (
 -- DIM_COMPONENT
 -- -------------------------
 CREATE TABLE DIM_COMPONENT (
-    component_sk INT AUTO_INCREMENT PRIMARY KEY,
-    component_id INT,
+    component_id INT AUTO_INCREMENT PRIMARY KEY,
     component_name VARCHAR(100) NOT NULL,
-    category VARCHAR(50) NOT NULL,
-    effective_date DATE,
-    end_date DATE,
-    is_current BOOLEAN
+    category VARCHAR(50) NOT NULL
 ) ENGINE=InnoDB;
 
 -- -------------------------
@@ -193,7 +189,7 @@ CREATE TABLE FACT_MAINTENANCE (
     maintenance_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     date_id INT NOT NULL,
     train_sk INT NOT NULL,
-    component_sk INT NOT NULL,
+    component_id INT NOT NULL,
     maintenance_type_id INT NOT NULL,
     technician_id INT NOT NULL,
     repair_time_hours DECIMAL(6,2),
@@ -202,7 +198,7 @@ CREATE TABLE FACT_MAINTENANCE (
 
     FOREIGN KEY (date_id) REFERENCES DIM_DATE(date_id),
     FOREIGN KEY (train_sk) REFERENCES DIM_TRAIN(train_sk),
-    FOREIGN KEY (component_sk) REFERENCES DIM_COMPONENT(component_sk),
+    FOREIGN KEY (component_id) REFERENCES DIM_COMPONENT(component_id),
     FOREIGN KEY (maintenance_type_id) REFERENCES DIM_MAINTENANCE_TYPE(maintenance_type_id),
     FOREIGN KEY (technician_id) REFERENCES DIM_TECHNICIAN(technician_id)
 ) ENGINE=InnoDB;
