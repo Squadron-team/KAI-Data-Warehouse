@@ -444,7 +444,7 @@
     <database>kai_dw_olap</database>
     <port>3306</port>
     <username>root</username>
-    <password>Encrypted 2be98afc86aa79f85a010a0408abafbf7</password>
+    <password>Encrypted </password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -467,10 +467,6 @@
       </attribute>
       <attribute>
         <code>IS_CLUSTERED</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>MSSQL_DOUBLE_DECIMAL_SEPARATOR</code>
         <attribute>N</attribute>
       </attribute>
       <attribute>
@@ -511,7 +507,7 @@
     <database>kai_dw_oltp</database>
     <port>3306</port>
     <username>root</username>
-    <password>Encrypted 2be98afc86aa79f85a010a0408abafbf7</password>
+    <password>Encrypted </password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -534,10 +530,6 @@
       </attribute>
       <attribute>
         <code>IS_CLUSTERED</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>MSSQL_DOUBLE_DECIMAL_SEPARATOR</code>
         <attribute>N</attribute>
       </attribute>
       <attribute>
@@ -608,21 +600,6 @@
     </hop>
     <hop>
       <from>Filter rows 2</from>
-      <to>Table output (insert)</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Database lookup (dim_technician)</from>
-      <to>Calculator (repair &amp; downtime)</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Calculator (repair &amp; downtime)</from>
-      <to>Database lookup (fact_maintenance)</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Filter rows 2</from>
       <to>Update</to>
       <enabled>Y</enabled>
     </hop>
@@ -632,8 +609,33 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
+      <from>Filter rows 2</from>
+      <to>filter rows3</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>filter rows3</from>
+      <to>Table output (insert)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
       <from>Select values</from>
+      <to>Calculator</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Calculator</from>
       <to>Database lookup (dim_date)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup (dim_technician)</from>
+      <to>Formula</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Formula</from>
+      <to>Database lookup (fact_maintenance)</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -671,13 +673,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>416</xloc>
-      <yloc>448</yloc>
+      <xloc>496</xloc>
+      <yloc>432</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Calculator (repair &amp; downtime)</name>
+    <name>Calculator</name>
     <type>Calculator</type>
     <description/>
     <distribute>Y</distribute>
@@ -689,25 +691,10 @@
     </partitioning>
     <failIfNoFile>Y</failIfNoFile>
     <calculation>
-      <field_name>repair_time_hours</field_name>
-      <calc_type>SUBTRACT</calc_type>
-      <field_a>repair_end_time</field_a>
-      <field_b>repair_start_time</field_b>
-      <field_c/>
-      <value_type>None</value_type>
-      <value_length>-1</value_length>
-      <value_precision>-1</value_precision>
-      <remove>N</remove>
-      <conversion_mask/>
-      <decimal_symbol/>
-      <grouping_symbol/>
-      <currency_symbol/>
-    </calculation>
-    <calculation>
-      <field_name>downtime_hours</field_name>
-      <calc_type>SUBTRACT</calc_type>
-      <field_a>downtime_end_time</field_a>
-      <field_b>downtime_start_time</field_b>
+      <field_name>maintenance_date_only</field_name>
+      <calc_type>REMOVE_TIME_FROM_DATE</calc_type>
+      <field_a>maintenance_date</field_a>
+      <field_b/>
       <field_c/>
       <value_type>None</value_type>
       <value_length>-1</value_length>
@@ -727,8 +714,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>880</xloc>
-      <yloc>880</yloc>
+      <xloc>352</xloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -823,8 +810,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>416</xloc>
-      <yloc>320</yloc>
+      <xloc>512</xloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -919,8 +906,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>768</xloc>
-      <yloc>784</yloc>
+      <xloc>688</xloc>
+      <yloc>848</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1072,13 +1059,13 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Table output (insert)</send_true_to>
+    <send_true_to>filter rows3</send_true_to>
     <send_false_to>Update</send_false_to>
     <compare>
       <condition>
         <negated>N</negated>
-        <leftvalue/>
-        <function>=</function>
+        <leftvalue>existing_maintenance_sk</leftvalue>
+        <function>IS NULL</function>
         <rightvalue/>
       </condition>
     </compare>
@@ -1093,6 +1080,100 @@
     <GUI>
       <xloc>1248</xloc>
       <yloc>784</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Formula</name>
+    <type>Formula</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <formula>
+      <field_name>downtime_hours</field_name>
+      <formula_string>IF(
+  ISBLANK([downtime_end_time]);
+  ;
+  ([downtime_end_time] - [downtime_start_time]) / 3600000
+)</formula_string>
+      <value_type>Number</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field/>
+    </formula>
+    <formula>
+      <field_name>repair_time_hours</field_name>
+      <formula_string>IF(
+  ISBLANK([repair_end_time]);
+  ;
+  ([repair_end_time] - [repair_start_time]) / 3600000
+)</formula_string>
+      <value_type>Number</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field/>
+    </formula>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>832</xloc>
+      <yloc>800</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>maintenance_date</name>
+        <rename>maintenance_date</rename>
+        <type>Date</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>240</xloc>
+      <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1455,10 +1536,6 @@ FROM MAINTENANCE m;
         <stream_name>maintenance_id</stream_name>
       </field>
       <field>
-        <column_name>train_sk</column_name>
-        <stream_name>train_sk</stream_name>
-      </field>
-      <field>
         <column_name>date_id</column_name>
         <stream_name>date_id</stream_name>
       </field>
@@ -1500,7 +1577,7 @@ FROM MAINTENANCE m;
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1456</xloc>
+      <xloc>1440</xloc>
       <yloc>688</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1559,8 +1636,8 @@ FROM MAINTENANCE m;
     </GUI>
   </step>
   <step>
-    <name>Select values</name>
-    <type>SelectValues</type>
+    <name>filter rows3</name>
+    <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -1569,26 +1646,16 @@ FROM MAINTENANCE m;
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <fields>
-      <select_unspecified>N</select_unspecified>
-      <meta>
-        <name>maintenance_date</name>
-        <rename>maintenance_date_only</rename>
-        <type>Date</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask/>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-    </fields>
+    <send_true_to>Table output (insert)</send_true_to>
+    <send_false_to/>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>date_id</leftvalue>
+        <function>IS NOT NULL</function>
+        <rightvalue/>
+      </condition>
+    </compare>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -1598,8 +1665,8 @@ FROM MAINTENANCE m;
       </output>
     </remotesteps>
     <GUI>
-      <xloc>240</xloc>
-      <yloc>320</yloc>
+      <xloc>1248</xloc>
+      <yloc>640</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
