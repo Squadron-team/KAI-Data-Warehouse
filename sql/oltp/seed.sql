@@ -88,7 +88,7 @@ VALUES
 -- MAINTENANCE
 -- =====================================================
 INSERT INTO MAINTENANCE
-    (
+(
     train_id,
     maintenance_date,
     maintenance_type,
@@ -97,69 +97,112 @@ INSERT INTO MAINTENANCE
     technician_name,
     status,
     description
-    )
+)
 VALUES
-    (
-        1,
-        '2024-12-01 08:00:00',
-        'Routine Check',
-        'Engine',
-        'Mechanical',
-        'Ahmad Wijaya',
-        'PLANNED',
-        'Monthly engine inspection'
-),
-    (
-        2,
-        '2024-12-05 09:00:00',
-        'Brake Repair',
-        'Brake System',
-        'Mechanical',
-        'Bambang Susilo',
-        'PLANNED',
-        'Brake pad replacement'
-),
-    (
-        3,
-        '2024-12-10 10:00:00',
-        'Electrical',
-        'Signal System',
-        'Electrical',
-        'Candra Putra',
-        'PLANNED',
-        'Signal system inspection'
-),
-    (
-        4,
-        '2024-12-15 11:00:00',
-        'Wheel Maintenance',
-        'Wheel Assembly',
-        'Mechanical',
-        'Dedi Kurniawan',
-        'PLANNED',
-        'Wheel alignment check'
-),
-    (
-        5,
-        '2024-12-20 13:00:00',
-        'Air Conditioning',
-        'AC Unit',
-        'Electrical',
-        'Edi Santoso',
-        'PLANNED',
-        'AC system maintenance'
-);
+-- 6
+(1, '2024-12-02 07:00:00', 'Routine Check', 'Brake System', 'Mechanical', 'Ahmad Wijaya', 'PLANNED', 'Weekly brake inspection'),
 
+-- 7
+(2, '2024-12-03 14:00:00', 'Corrective', 'Pantograph', 'Electrical', 'Bambang Susilo', 'PLANNED', 'Pantograph malfunction'),
+
+-- 8
+(3, '2024-12-04 22:00:00', 'Emergency Repair', 'Engine', 'Mechanical', 'Candra Putra', 'PLANNED', 'Unexpected engine failure'),
+
+-- 9
+(4, '2024-12-06 09:30:00', 'Routine Check', 'Door System', 'Mechanical', 'Dedi Kurniawan', 'PLANNED', 'Door sensor calibration'),
+
+-- 10
+(5, '2024-12-07 01:00:00', 'Electrical Repair', 'Lighting System', 'Electrical', 'Edi Santoso', 'PLANNED', 'Cabin lighting failure'),
+
+-- 11
+(1, '2024-12-08 16:00:00', 'Wheel Maintenance', 'Wheel Assembly', 'Mechanical', 'Fajar Pratama', 'PLANNED', 'Wheel vibration reported'),
+
+-- 12
+(2, '2024-12-09 08:00:00', 'Routine Check', 'Air Compressor', 'Mechanical', 'Gilang Ramadhan', 'PLANNED', 'Pressure stability check'),
+
+-- 13
+(3, '2024-12-11 11:00:00', 'Corrective', 'Signal System', 'Electrical', 'Hendra Saputra', 'PLANNED', 'Signal delay issue'),
+
+-- 14
+(4, '2024-12-12 19:30:00', 'Emergency Repair', 'Brake System', 'Mechanical', 'Indra Gunawan', 'PLANNED', 'Brake overheating'),
+
+-- 15
+(5, '2024-12-13 06:00:00', 'Routine Check', 'AC Unit', 'Electrical', 'Joko Santoso', 'PLANNED', 'Cooling performance check'),
+
+-- 16
+(1, '2024-12-14 23:00:00', 'Electrical Repair', 'Battery System', 'Electrical', 'Kevin Wijaya', 'PLANNED', 'Battery voltage drop'),
+
+-- 17
+(2, '2024-12-16 10:00:00', 'Corrective', 'Suspension', 'Mechanical', 'Lukman Hakim', 'PLANNED', 'Unusual vibration'),
+
+-- 18
+(3, '2024-12-18 15:30:00', 'Routine Check', 'Fuel System', 'Mechanical', 'Muhammad Rizki', 'PLANNED', 'Fuel efficiency inspection'),
+
+-- 19
+(4, '2024-12-19 03:00:00', 'Emergency Repair', 'Traction Motor', 'Electrical', 'Nanda Prakoso', 'PLANNED', 'Traction motor fault'),
+
+-- 20
+(5, '2024-12-21 09:00:00', 'Corrective', 'Cooling System', 'Mechanical', 'Oka Prasetyo', 'PLANNED', 'Overheating issue'),
+
+-- 21
+(3, '2024-12-22 17:00:00', 'Routine Check', 'Coupler', 'Mechanical', 'Putra Anugrah', 'PLANNED', 'Coupler wear inspection'),
+
+-- 22
+(1, '2024-12-23 05:30:00', 'Electrical Repair', 'Control Panel', 'Electrical', 'Rizal Firmansyah', 'PLANNED', 'Control panel malfunction'),
+
+-- 23
+(2, '2024-12-24 13:00:00', 'Wheel Maintenance', 'Wheel Assembly', 'Mechanical', 'Surya Mahendra', 'PLANNED', 'Wheel profile adjustment'),
+
+-- 24
+(4, '2024-12-26 21:00:00', 'Emergency Repair', 'Engine', 'Mechanical', 'Teguh Wibowo', 'PLANNED', 'Engine shutdown during operation'),
+
+-- 25
+(5, '2024-12-28 08:00:00', 'Routine Check', 'Brake System', 'Mechanical', 'Yoga Permana', 'PLANNED', 'Brake pad wear check');
+
+-- Maintenance 6 (short routine)
 UPDATE MAINTENANCE
 SET
-    repair_start_time = '2024-12-01 08:30:00',
-    downtime_start_time = '2024-12-01 08:30:00',
-    status = 'IN_PROGRESS'
-WHERE maintenance_id = 1;
-
-UPDATE MAINTENANCE
-SET
-    repair_end_time = '2024-12-01 11:30:00',
-    downtime_end_time = '2024-12-01 12:00:00',
+    repair_start_time = '2024-12-02 07:15:00',
+    repair_end_time   = '2024-12-02 08:00:00',
+    downtime_start_time = '2024-12-02 07:15:00',
+    downtime_end_time   = '2024-12-02 08:15:00',
     status = 'COMPLETED'
-WHERE maintenance_id = 1;
+WHERE maintenance_id = 6;
+
+-- Maintenance 8 (long emergency)
+UPDATE MAINTENANCE
+SET
+    repair_start_time = '2024-12-04 22:30:00',
+    repair_end_time   = '2024-12-05 05:30:00',
+    downtime_start_time = '2024-12-04 22:30:00',
+    downtime_end_time   = '2024-12-05 06:00:00',
+    status = 'COMPLETED'
+WHERE maintenance_id = 8;
+
+-- Maintenance 10 (night electrical)
+UPDATE MAINTENANCE
+SET
+    repair_start_time = '2024-12-07 01:30:00',
+    repair_end_time   = '2024-12-07 03:00:00',
+    downtime_start_time = '2024-12-07 01:30:00',
+    downtime_end_time   = '2024-12-07 03:15:00',
+    status = 'COMPLETED'
+WHERE maintenance_id = 10;
+
+-- Maintenance 14 (delayed downtime)
+UPDATE MAINTENANCE
+SET
+    repair_start_time = '2024-12-12 20:00:00',
+    repair_end_time   = '2024-12-12 23:00:00',
+    downtime_start_time = '2024-12-12 20:00:00',
+    downtime_end_time   = '2024-12-13 01:30:00',
+    status = 'COMPLETED'
+WHERE maintenance_id = 14;
+
+-- Maintenance 19 (still in progress)
+UPDATE MAINTENANCE
+SET
+    repair_start_time = '2024-12-19 03:30:00',
+    downtime_start_time = '2024-12-19 03:30:00',
+    status = 'IN_PROGRESS'
+WHERE maintenance_id = 19;
