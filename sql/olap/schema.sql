@@ -129,6 +129,8 @@ CREATE TABLE FACT_TICKET_SALES (
     payment_method_id INT NOT NULL,
     origin_station_sk INT NOT NULL,
     destination_station_sk INT NOT NULL,
+
+    -- measures
     ticket_count INT,
     revenue DECIMAL(15,2),
 
