@@ -190,7 +190,10 @@ CREATE TABLE FACT_OPERATIONAL_PERFORMANCE (
 -- FACT_MAINTENANCE
 -- -------------------------
 CREATE TABLE FACT_MAINTENANCE (
-    maintenance_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    maintenance_sk BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+    maintenance_id INT NOT NULL,
+    
     date_id INT NOT NULL,
     train_sk INT NOT NULL,
     component_id INT NOT NULL,

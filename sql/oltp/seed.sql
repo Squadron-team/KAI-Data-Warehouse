@@ -95,30 +95,71 @@ INSERT INTO MAINTENANCE
     component_name,
     component_category,
     technician_name,
+    status,
     description
     )
 VALUES
-    (1, '2024-12-01 08:00:00', 'Routine Check',
-        'Engine', 'Mechanical',
+    (
+        1,
+        '2024-12-01 08:00:00',
+        'Routine Check',
+        'Engine',
+        'Mechanical',
         'Ahmad Wijaya',
-        'Monthly engine inspection'),
-
-    (2, '2024-12-05 09:00:00', 'Brake Repair',
-        'Brake System', 'Mechanical',
+        'PLANNED',
+        'Monthly engine inspection'
+),
+    (
+        2,
+        '2024-12-05 09:00:00',
+        'Brake Repair',
+        'Brake System',
+        'Mechanical',
         'Bambang Susilo',
-        'Brake pad replacement'),
-
-    (3, '2024-12-10 10:00:00', 'Electrical',
-        'Signal System', 'Electrical',
+        'PLANNED',
+        'Brake pad replacement'
+),
+    (
+        3,
+        '2024-12-10 10:00:00',
+        'Electrical',
+        'Signal System',
+        'Electrical',
         'Candra Putra',
-        'Signal system inspection'),
-
-    (4, '2024-12-15 11:00:00', 'Wheel Maintenance',
-        'Wheel Assembly', 'Mechanical',
+        'PLANNED',
+        'Signal system inspection'
+),
+    (
+        4,
+        '2024-12-15 11:00:00',
+        'Wheel Maintenance',
+        'Wheel Assembly',
+        'Mechanical',
         'Dedi Kurniawan',
-        'Wheel alignment check'),
-
-    (5, '2024-12-20 13:00:00', 'Air Conditioning',
-        'AC Unit', 'Electrical',
+        'PLANNED',
+        'Wheel alignment check'
+),
+    (
+        5,
+        '2024-12-20 13:00:00',
+        'Air Conditioning',
+        'AC Unit',
+        'Electrical',
         'Edi Santoso',
-        'AC system maintenance');
+        'PLANNED',
+        'AC system maintenance'
+);
+
+UPDATE MAINTENANCE
+SET
+    repair_start_time = '2024-12-01 08:30:00',
+    downtime_start_time = '2024-12-01 08:30:00',
+    status = 'IN_PROGRESS'
+WHERE maintenance_id = 1;
+
+UPDATE MAINTENANCE
+SET
+    repair_end_time = '2024-12-01 11:30:00',
+    downtime_end_time = '2024-12-01 12:00:00',
+    status = 'COMPLETED'
+WHERE maintenance_id = 1;

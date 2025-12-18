@@ -119,12 +119,20 @@ CREATE TABLE TICKET (
 CREATE TABLE MAINTENANCE (
     maintenance_id INT AUTO_INCREMENT PRIMARY KEY,
     train_id INT NOT NULL,
-    maintenance_date DATETIME NOT NULL,
+
+    maintenance_date DATETIME NOT NULL,       -- planned / registered date
+
     maintenance_type VARCHAR(50) NOT NULL,
     component_name VARCHAR(100) NOT NULL,
     component_category VARCHAR(50) NOT NULL,
     technician_name VARCHAR(100) NOT NULL,
 
+    repair_start_time DATETIME,
+    repair_end_time DATETIME,
+    downtime_start_time DATETIME,
+    downtime_end_time DATETIME,
+
+    status VARCHAR(30) NOT NULL DEFAULT 'PLANNED',
     description TEXT,
 
     CONSTRAINT fk_maintenance_train
