@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>etl-dim-route</name>
+    <name>etl-fact-table-operational-performance</name>
     <description/>
     <extended_description/>
     <trans_version/>
     <trans_type>Normal</trans_type>
-    <trans_status>0</trans_status>
     <directory>/</directory>
     <parameters>
     </parameters>
@@ -428,16 +427,16 @@
     <clusterschemas>
     </clusterschemas>
     <created_user>-</created_user>
-    <created_date>2025/12/18 00:58:16.718</created_date>
+    <created_date>2025/12/18 14:01:27.767</created_date>
     <modified_user>-</modified_user>
-    <modified_date>2025/12/18 00:58:16.718</modified_date>
+    <modified_date>2025/12/18 14:01:27.767</modified_date>
     <key_for_session_key>H4sIAAAAAAAA/wMAAAAAAAAAAAA=</key_for_session_key>
     <is_key_private>N</is_key_private>
   </info>
   <notepads>
   </notepads>
   <connection>
-    <name>conn_kai_dw_olap</name>
+    <name>kai_dw_olap</name>
     <server>localhost</server>
     <type>MYSQL</type>
     <access>Native</access>
@@ -467,10 +466,6 @@
       </attribute>
       <attribute>
         <code>IS_CLUSTERED</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>MSSQL_DOUBLE_DECIMAL_SEPARATOR</code>
         <attribute>N</attribute>
       </attribute>
       <attribute>
@@ -504,7 +499,7 @@
     </attributes>
   </connection>
   <connection>
-    <name>conn_kai_dw_oltp</name>
+    <name>kai_dw_oltp</name>
     <server>localhost</server>
     <type>MYSQL</type>
     <access>Native</access>
@@ -534,10 +529,6 @@
       </attribute>
       <attribute>
         <code>IS_CLUSTERED</code>
-        <attribute>N</attribute>
-      </attribute>
-      <attribute>
-        <code>MSSQL_DOUBLE_DECIMAL_SEPARATOR</code>
         <attribute>N</attribute>
       </attribute>
       <attribute>
@@ -572,43 +563,206 @@
   </connection>
   <order>
     <hop>
-      <from>Database lookup</from>
-      <to>Filter rows (new route)</to>
+      <from>Add constants (current_active)</from>
+      <to>Database lookup (train)</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Get system info</from>
-      <to>Table output (dim_route)</to>
+      <from>Database lookup (dim_route)</from>
+      <to>Database lookup (dim_date)</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Filter rows (new route)</from>
-      <to>Get system info</to>
+      <from>Database lookup (dim_date)</from>
+      <to>Database lookup (origin station)</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Get system info 2</from>
-      <to>Update</to>
+      <from>Database lookup (origin station)</from>
+      <to>Database lookup (destination station)</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Table input (route)</from>
-      <to>Add constants</to>
+      <from>Database lookup (destination station)</from>
+      <to>Select values</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Add constants</from>
-      <to>Database lookup</to>
+      <from>Select values</from>
+      <to>Calculator (measures)</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Filter rows (new route)</from>
-      <to>Get system info 2</to>
+      <from>Calculator (measures)</from>
+      <to>Formula (is_ontime)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Formula (is_ontime)</from>
+      <to>Table output</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Database lookup (train)</from>
+      <to>Database lookup (dim_route)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Table input 2</from>
+      <to>Add constants (current_active)</to>
       <enabled>Y</enabled>
     </hop>
   </order>
   <step>
-    <name>Add constants</name>
+    <name>Calculator (measures)</name>
+    <type>Calculator</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <failIfNoFile>Y</failIfNoFile>
+    <calculation>
+      <field_name>departure_delay_minutes</field_name>
+      <calc_type>SUBTRACT</calc_type>
+      <field_a>actual_departure</field_a>
+      <field_b>scheduled_departure</field_b>
+      <field_c/>
+      <value_type>None</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask/>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+    </calculation>
+    <calculation>
+      <field_name>arrival_delay_minutes</field_name>
+      <calc_type>SUBTRACT</calc_type>
+      <field_a>actual_arrival</field_a>
+      <field_b>scheduled_arrival</field_b>
+      <field_c/>
+      <value_type>None</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+      <conversion_mask/>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+    </calculation>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>768</xloc>
+      <yloc>832</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Table output</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>kai_dw_olap</connection>
+    <schema/>
+    <table>fact_operational_performance</table>
+    <commit>1000</commit>
+    <truncate>N</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+      <field>
+        <column_name>scheduled_departure</column_name>
+        <stream_name>scheduled_departure</stream_name>
+      </field>
+      <field>
+        <column_name>scheduled_arrival</column_name>
+        <stream_name>scheduled_arrival</stream_name>
+      </field>
+      <field>
+        <column_name>actual_departure</column_name>
+        <stream_name>actual_departure</stream_name>
+      </field>
+      <field>
+        <column_name>actual_arrival</column_name>
+        <stream_name>actual_arrival</stream_name>
+      </field>
+      <field>
+        <column_name>train_sk</column_name>
+        <stream_name>train_sk</stream_name>
+      </field>
+      <field>
+        <column_name>route_sk</column_name>
+        <stream_name>route_sk</stream_name>
+      </field>
+      <field>
+        <column_name>date_id</column_name>
+        <stream_name>date_id</stream_name>
+      </field>
+      <field>
+        <column_name>origin_station_sk</column_name>
+        <stream_name>origin_station_sk</stream_name>
+      </field>
+      <field>
+        <column_name>destination_station_sk</column_name>
+        <stream_name>destination_station_sk</stream_name>
+      </field>
+      <field>
+        <column_name>departure_delay_minutes</column_name>
+        <stream_name>departure_delay_minutes</stream_name>
+      </field>
+      <field>
+        <column_name>arrival_delay_minutes</column_name>
+        <stream_name>arrival_delay_minutes</stream_name>
+      </field>
+      <field>
+        <column_name>is_ontime</column_name>
+        <stream_name>is_ontime</stream_name>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>1136</xloc>
+      <yloc>960</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Add constants (current_active)</name>
     <type>Constant</type>
     <description/>
     <distribute>Y</distribute>
@@ -620,7 +774,7 @@
     </partitioning>
     <fields>
       <field>
-        <name>active</name>
+        <name>current_active</name>
         <type>Integer</type>
         <format/>
         <currency/>
@@ -641,13 +795,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>240</xloc>
-      <yloc>336</yloc>
+      <xloc>384</xloc>
+      <yloc>240</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Database lookup</name>
+    <name>Database lookup (dim_route)</name>
     <type>DBLookup</type>
     <description/>
     <distribute>Y</distribute>
@@ -657,7 +811,7 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>conn_kai_dw_olap</connection>
+    <connection>kai_dw_olap</connection>
     <cache>N</cache>
     <cache_load_all>N</cache_load_all>
     <cache_size>0</cache_size>
@@ -674,52 +828,76 @@
         <name2/>
       </key>
       <key>
-        <name>active</name>
+        <name>current_active</name>
         <field>is_current</field>
         <condition>=</condition>
         <name2/>
       </key>
       <value>
         <name>route_sk</name>
-        <rename>current_route_sk</rename>
+        <rename>route_sk</rename>
+        <default/>
+        <type>None</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>384</xloc>
+      <yloc>432</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup (train)</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>kai_dw_olap</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema/>
+      <table>dim_train</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>train_id</name>
+        <field>train_id</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>current_active</name>
+        <field>is_current</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>capacity</name>
+        <rename>seat_capacity</rename>
         <default/>
         <type>Integer</type>
       </value>
       <value>
-        <name>route_name</name>
-        <rename>dim_route_name</rename>
+        <name>train_sk</name>
+        <rename>train_sk</rename>
         <default/>
-        <type>String</type>
-      </value>
-      <value>
-        <name>origin_station_name</name>
-        <rename>dim_origin_station_name</rename>
-        <default/>
-        <type>String</type>
-      </value>
-      <value>
-        <name>origin_city</name>
-        <rename>dim_origin_city</rename>
-        <default/>
-        <type>String</type>
-      </value>
-      <value>
-        <name>destination_station_name</name>
-        <rename>dim_destination_station_name</rename>
-        <default/>
-        <type>String</type>
-      </value>
-      <value>
-        <name>destination_city</name>
-        <rename>dim_destination_city</rename>
-        <default/>
-        <type>String</type>
-      </value>
-      <value>
-        <name>distance_km</name>
-        <rename>dim_distance_km</rename>
-        <default/>
-        <type>Integer</type>
+        <type>None</type>
       </value>
     </lookup>
     <attributes/>
@@ -737,7 +915,7 @@
     </GUI>
   </step>
   <step>
-    <name>Filter rows (new route)</name>
+    <name>Filter rows (non-null value)</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
@@ -747,13 +925,13 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Get system info</send_true_to>
-    <send_false_to>Get system info 2</send_false_to>
+    <send_true_to>Database lookup (dim_route)</send_true_to>
+    <send_false_to/>
     <compare>
       <condition>
         <negated>N</negated>
-        <leftvalue>current_route_sk</leftvalue>
-        <function>IS NULL</function>
+        <leftvalue>train_sk</leftvalue>
+        <function>IS NOT NULL</function>
         <rightvalue/>
       </condition>
     </compare>
@@ -766,14 +944,158 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>544</xloc>
-      <yloc>336</yloc>
+      <xloc>688</xloc>
+      <yloc>384</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Get system info</name>
-    <type>SystemInfo</type>
+    <name>Database lookup (origin station)</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>kai_dw_olap</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema/>
+      <table>dim_station</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>origin_station_id</name>
+        <field>station_id</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>station_sk</name>
+        <rename>origin_station_sk</rename>
+        <default/>
+        <type>Date</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>384</xloc>
+      <yloc>704</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup (destination station)</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>kai_dw_olap</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema/>
+      <table>dim_station</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>destination_station_id</name>
+        <field>station_id</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>station_sk</name>
+        <rename>destination_station_sk</rename>
+        <default/>
+        <type>Date</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>384</xloc>
+      <yloc>832</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Database lookup (dim_date)</name>
+    <type>DBLookup</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>kai_dw_olap</connection>
+    <cache>N</cache>
+    <cache_load_all>N</cache_load_all>
+    <cache_size>0</cache_size>
+    <lookup>
+      <schema/>
+      <table>dim_date</table>
+      <orderby/>
+      <fail_on_multiple>N</fail_on_multiple>
+      <eat_row_on_failure>N</eat_row_on_failure>
+      <key>
+        <name>trip_date</name>
+        <field>date_value</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>date_id</name>
+        <rename>date_id</rename>
+        <default/>
+        <type>Date</type>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>384</xloc>
+      <yloc>560</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values</name>
+    <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -784,9 +1106,42 @@
     </partitioning>
     <fields>
       <field>
-        <name>etl_date</name>
-        <type>system date (fixed)</type>
+        <name>departure_time</name>
+        <rename>scheduled_departure</rename>
       </field>
+      <field>
+        <name>arrival_time</name>
+        <rename>scheduled_arrival</rename>
+      </field>
+      <field>
+        <name>actual_departure</name>
+        <rename/>
+      </field>
+      <field>
+        <name>actual_arrival</name>
+        <rename/>
+      </field>
+      <field>
+        <name>train_sk</name>
+        <rename/>
+      </field>
+      <field>
+        <name>route_sk</name>
+        <rename/>
+      </field>
+      <field>
+        <name>date_id</name>
+        <rename/>
+      </field>
+      <field>
+        <name>origin_station_sk</name>
+        <rename/>
+      </field>
+      <field>
+        <name>destination_station_sk</name>
+        <rename/>
+      </field>
+      <select_unspecified>N</select_unspecified>
     </fields>
     <attributes/>
     <cluster_schema/>
@@ -797,14 +1152,14 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>736</xloc>
-      <yloc>176</yloc>
+      <xloc>608</xloc>
+      <yloc>832</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Get system info 2</name>
-    <type>SystemInfo</type>
+    <name>Formula (is_ontime)</name>
+    <type>Formula</type>
     <description/>
     <distribute>Y</distribute>
     <custom_distribution/>
@@ -813,12 +1168,15 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <fields>
-      <field>
-        <name>etl_date</name>
-        <type>system date (fixed)</type>
-      </field>
-    </fields>
+    <formula>
+      <field_name>is_ontime</field_name>
+      <formula_string>[arrival_delay_minutes] &lt;= 0
+</formula_string>
+      <value_type>Boolean</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <replace_field/>
+    </formula>
     <attributes/>
     <cluster_schema/>
     <remotesteps>
@@ -828,13 +1186,13 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>752</xloc>
-      <yloc>464</yloc>
+      <xloc>928</xloc>
+      <yloc>928</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>Table input (route)</name>
+    <name>Table input 2</name>
     <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -844,22 +1202,24 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <connection>conn_kai_dw_oltp</connection>
+    <connection>kai_dw_oltp</connection>
     <sql>SELECT
-    r.route_id,
-    r.route_name,
-    r.distance_km,
-
-    os.station_name AS origin_station_name,
-    os.city         AS origin_city,
-
-    ds.station_name AS destination_station_name,
-    ds.city         AS destination_city
-
-FROM ROUTE r
-JOIN STATION os ON r.origin_station_id = os.station_id
-JOIN STATION ds ON r.destination_station_id = ds.station_id;
-</sql>
+    t.schedule_id,
+	t.actual_departure,
+	t.actual_arrival,
+	t.status,
+	ts.train_id,
+	ts.route_id,
+	ts.departure_time,
+	DATE(ts.departure_time) AS trip_date,
+	ts.arrival_time,
+	r.origin_station_id,
+	r.destination_station_id
+FROM trip t
+LEFT JOIN train_schedule ts
+	ON t.schedule_id = ts.schedule_id
+LEFT JOIN route r
+	ON r.route_id = ts.route_id;</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
@@ -870,10 +1230,125 @@ JOIN STATION ds ON r.destination_station_id = ds.station_id;
       <value-meta>
         <type>Integer</type>
         <storagetype>normal</storagetype>
+        <name>schedule_id</name>
+        <length>9</length>
+        <precision>0</precision>
+        <origin>Table input 2</origin>
+        <comments>schedule_id</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_ID</date_format_locale>
+        <date_format_timezone>Asia/Jakarta</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Timestamp</type>
+        <storagetype>normal</storagetype>
+        <name>actual_departure</name>
+        <length>0</length>
+        <precision>-1</precision>
+        <origin>Table input 2</origin>
+        <comments>actual_departure</comments>
+        <conversion_Mask/>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_ID</date_format_locale>
+        <date_format_timezone>Asia/Jakarta</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Timestamp</type>
+        <storagetype>normal</storagetype>
+        <name>actual_arrival</name>
+        <length>0</length>
+        <precision>-1</precision>
+        <origin>Table input 2</origin>
+        <comments>actual_arrival</comments>
+        <conversion_Mask/>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_ID</date_format_locale>
+        <date_format_timezone>Asia/Jakarta</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>String</type>
+        <storagetype>normal</storagetype>
+        <name>status</name>
+        <length>30</length>
+        <precision>-1</precision>
+        <origin>Table input 2</origin>
+        <comments>status</comments>
+        <conversion_Mask/>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_ID</date_format_locale>
+        <date_format_timezone>Asia/Jakarta</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
+        <name>train_id</name>
+        <length>9</length>
+        <precision>0</precision>
+        <origin>Table input 2</origin>
+        <comments>train_id</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_ID</date_format_locale>
+        <date_format_timezone>Asia/Jakarta</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Integer</type>
+        <storagetype>normal</storagetype>
         <name>route_id</name>
         <length>9</length>
         <precision>0</precision>
-        <origin>Table input (route)</origin>
+        <origin>Table input 2</origin>
         <comments>route_id</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
         <decimal_symbol>.</decimal_symbol>
@@ -891,13 +1366,59 @@ JOIN STATION ds ON r.destination_station_id = ds.station_id;
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
       <value-meta>
-        <type>String</type>
+        <type>Timestamp</type>
         <storagetype>normal</storagetype>
-        <name>route_name</name>
-        <length>100</length>
+        <name>departure_time</name>
+        <length>0</length>
         <precision>-1</precision>
-        <origin>Table input (route)</origin>
-        <comments>route_name</comments>
+        <origin>Table input 2</origin>
+        <comments>departure_time</comments>
+        <conversion_Mask/>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_ID</date_format_locale>
+        <date_format_timezone>Asia/Jakarta</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Date</type>
+        <storagetype>normal</storagetype>
+        <name>trip_date</name>
+        <length>-1</length>
+        <precision>-1</precision>
+        <origin>Table input 2</origin>
+        <comments>trip_date</comments>
+        <conversion_Mask/>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol>,</grouping_symbol>
+        <currency_symbol/>
+        <trim_type>none</trim_type>
+        <case_insensitive>N</case_insensitive>
+        <collator_disabled>Y</collator_disabled>
+        <collator_strength>0</collator_strength>
+        <sort_descending>N</sort_descending>
+        <output_padding>N</output_padding>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_ID</date_format_locale>
+        <date_format_timezone>Asia/Jakarta</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+      </value-meta>
+      <value-meta>
+        <type>Timestamp</type>
+        <storagetype>normal</storagetype>
+        <name>arrival_time</name>
+        <length>0</length>
+        <precision>-1</precision>
+        <origin>Table input 2</origin>
+        <comments>arrival_time</comments>
         <conversion_Mask/>
         <decimal_symbol>.</decimal_symbol>
         <grouping_symbol>,</grouping_symbol>
@@ -916,11 +1437,11 @@ JOIN STATION ds ON r.destination_station_id = ds.station_id;
       <value-meta>
         <type>Integer</type>
         <storagetype>normal</storagetype>
-        <name>distance_km</name>
+        <name>origin_station_id</name>
         <length>9</length>
         <precision>0</precision>
-        <origin>Table input (route)</origin>
-        <comments>distance_km</comments>
+        <origin>Table input 2</origin>
+        <comments>origin_station_id</comments>
         <conversion_Mask>####0;-####0</conversion_Mask>
         <decimal_symbol>.</decimal_symbol>
         <grouping_symbol>,</grouping_symbol>
@@ -937,83 +1458,14 @@ JOIN STATION ds ON r.destination_station_id = ds.station_id;
         <lenient_string_to_number>N</lenient_string_to_number>
       </value-meta>
       <value-meta>
-        <type>String</type>
+        <type>Integer</type>
         <storagetype>normal</storagetype>
-        <name>origin_station_name</name>
-        <length>100</length>
-        <precision>-1</precision>
-        <origin>Table input (route)</origin>
-        <comments>origin_station_name</comments>
-        <conversion_Mask/>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol>,</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_ID</date_format_locale>
-        <date_format_timezone>Asia/Jakarta</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>String</type>
-        <storagetype>normal</storagetype>
-        <name>origin_city</name>
-        <length>100</length>
-        <precision>-1</precision>
-        <origin>Table input (route)</origin>
-        <comments>origin_city</comments>
-        <conversion_Mask/>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol>,</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_ID</date_format_locale>
-        <date_format_timezone>Asia/Jakarta</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>String</type>
-        <storagetype>normal</storagetype>
-        <name>destination_station_name</name>
-        <length>100</length>
-        <precision>-1</precision>
-        <origin>Table input (route)</origin>
-        <comments>destination_station_name</comments>
-        <conversion_Mask/>
-        <decimal_symbol>.</decimal_symbol>
-        <grouping_symbol>,</grouping_symbol>
-        <currency_symbol/>
-        <trim_type>none</trim_type>
-        <case_insensitive>N</case_insensitive>
-        <collator_disabled>Y</collator_disabled>
-        <collator_strength>0</collator_strength>
-        <sort_descending>N</sort_descending>
-        <output_padding>N</output_padding>
-        <date_format_lenient>N</date_format_lenient>
-        <date_format_locale>en_ID</date_format_locale>
-        <date_format_timezone>Asia/Jakarta</date_format_timezone>
-        <lenient_string_to_number>N</lenient_string_to_number>
-      </value-meta>
-      <value-meta>
-        <type>String</type>
-        <storagetype>normal</storagetype>
-        <name>destination_city</name>
-        <length>100</length>
-        <precision>-1</precision>
-        <origin>Table input (route)</origin>
-        <comments>destination_city</comments>
-        <conversion_Mask/>
+        <name>destination_station_id</name>
+        <length>9</length>
+        <precision>0</precision>
+        <origin>Table input 2</origin>
+        <comments>destination_station_id</comments>
+        <conversion_Mask>####0;-####0</conversion_Mask>
         <decimal_symbol>.</decimal_symbol>
         <grouping_symbol>,</grouping_symbol>
         <currency_symbol/>
@@ -1038,133 +1490,8 @@ JOIN STATION ds ON r.destination_station_id = ds.station_id;
       </output>
     </remotesteps>
     <GUI>
-      <xloc>112</xloc>
-      <yloc>336</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Table output (dim_route)</name>
-    <type>TableOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>conn_kai_dw_olap</connection>
-    <schema/>
-    <table>dim_route</table>
-    <commit>1000</commit>
-    <truncate>N</truncate>
-    <ignore_errors>N</ignore_errors>
-    <use_batch>Y</use_batch>
-    <specify_fields>Y</specify_fields>
-    <partitioning_enabled>N</partitioning_enabled>
-    <partitioning_field/>
-    <partitioning_daily>N</partitioning_daily>
-    <partitioning_monthly>Y</partitioning_monthly>
-    <tablename_in_field>N</tablename_in_field>
-    <tablename_field/>
-    <tablename_in_table>Y</tablename_in_table>
-    <return_keys>N</return_keys>
-    <return_field/>
-    <fields>
-      <field>
-        <column_name>route_id</column_name>
-        <stream_name>route_id</stream_name>
-      </field>
-      <field>
-        <column_name>route_name</column_name>
-        <stream_name>route_name</stream_name>
-      </field>
-      <field>
-        <column_name>distance_km</column_name>
-        <stream_name>distance_km</stream_name>
-      </field>
-      <field>
-        <column_name>origin_station_name</column_name>
-        <stream_name>origin_station_name</stream_name>
-      </field>
-      <field>
-        <column_name>origin_city</column_name>
-        <stream_name>origin_city</stream_name>
-      </field>
-      <field>
-        <column_name>destination_station_name</column_name>
-        <stream_name>destination_station_name</stream_name>
-      </field>
-      <field>
-        <column_name>destination_city</column_name>
-        <stream_name>destination_city</stream_name>
-      </field>
-      <field>
-        <column_name>effective_date</column_name>
-        <stream_name>etl_date</stream_name>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>912</xloc>
-      <yloc>160</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Update</name>
-    <type>Update</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>conn_kai_dw_olap</connection>
-    <skip_lookup>N</skip_lookup>
-    <commit>100</commit>
-    <use_batch>N</use_batch>
-    <error_ignored>N</error_ignored>
-    <ignore_flag_field/>
-    <lookup>
-      <schema/>
-      <table>dim_route</table>
-      <key>
-        <name>current_route_sk</name>
-        <field>route_sk</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <value>
-        <name>end_date</name>
-        <rename>etl_date - 1</rename>
-      </value>
-      <value>
-        <name>is_current</name>
-        <rename>0</rename>
-      </value>
-    </lookup>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>896</xloc>
-      <yloc>464</yloc>
+      <xloc>144</xloc>
+      <yloc>240</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

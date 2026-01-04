@@ -641,7 +641,7 @@
     </remotesteps>
     <GUI>
       <xloc>432</xloc>
-      <yloc>336</yloc>
+      <yloc>320</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -709,7 +709,7 @@
         <update>Y</update>
       </value>
       <value>
-        <name>component_category</name>
+        <name>category</name>
         <rename>component_category</rename>
         <update>Y</update>
       </value>

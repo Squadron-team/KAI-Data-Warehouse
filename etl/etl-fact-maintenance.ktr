@@ -444,7 +444,7 @@
     <database>kai_dw_olap</database>
     <port>3306</port>
     <username>root</username>
-    <password>Encrypted </password>
+    <password>Encrypted 2be98afc86aa79f85a010a0408abafbf7</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -507,7 +507,7 @@
     <database>kai_dw_oltp</database>
     <port>3306</port>
     <username>root</username>
-    <password>Encrypted </password>
+    <password>Encrypted 2be98afc86aa79f85a010a0408abafbf7</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
