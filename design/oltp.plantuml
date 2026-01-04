@@ -16,7 +16,7 @@ entity "Station" as Station {
   station_code : varchar
   station_name : varchar
   city : varchar
-  region : varchar
+  province : varchar
 }
 
 entity "Route" as Route {
@@ -53,6 +53,7 @@ entity "Passenger" as Passenger {
   full_name : varchar
   phone : varchar
   gender : varchar
+  age : int
 }
 
 entity "Ticket" as Ticket {
@@ -64,6 +65,7 @@ entity "Ticket" as Ticket {
   seat_number : varchar
   price : decimal
   payment_method : varchar
+  status : varchar
 }
 
 entity "Maintenance" as Maintenance {
@@ -72,8 +74,15 @@ entity "Maintenance" as Maintenance {
   train_id : int <<FK>>
   maintenance_date : datetime
   maintenance_type : varchar
-  description : text
+  component_name : varchar
+  component_category : varchar
   technician_name : varchar
+  repair_start_time : datetime
+  repair_end_time : datetime
+  downtime_start_time : datetime
+  downtime_end_time : datetime
+  status : varchar
+  description : text
 }
 
 ' Relationships
