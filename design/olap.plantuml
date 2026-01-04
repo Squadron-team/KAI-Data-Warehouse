@@ -20,38 +20,51 @@ entity "DimDate" as DimDate <<D>> {
 }
 
 entity "DimTrain" as DimTrain <<D>> {
-  + train_id : int <<PK>>
+  + train_sk : int <<PK>>
   --
+  train_id : int
   train_name : varchar
   train_type : varchar
   capacity : int
   manufacture_year : int
+  effective_date : datetime
+  end_date : datetime
+  is_current : boolean
 }
 
 entity "DimRoute" as DimRoute <<D>> {
-  + route_id : int <<PK>>
+  + route_sk : int <<PK>>
   --
+  route_id : int
   route_name : varchar
-  origin_station_id : int <<FK>>
-  destination_station_id : int <<FK>>
+  origin_station_name : varchar
+  origin_city : varchar
+  destination_station_name : varchar
+  destination_city : varchar
   distance_km : int
+  effective_date : datetime
+  end_date : datetime
+  is_current : boolean
 }
 
 entity "DimStation" as DimStation <<D>> {
-  + station_id : int <<PK>>
+  + station_sk : int <<PK>>
   --
+  station_id : int
   station_code : varchar
   station_name : varchar
   city : varchar
-  region : varchar
+  province : varchar
 }
 
 entity "DimPassenger" as DimPassenger <<D>> {
-  + passenger_id : int <<PK>>
+  + passenger_sk : int <<PK>>
   --
+  passenger_id : int
   full_name : varchar
+  phone : varchar
   gender : varchar
-  age_group : varchar
+  age : int
 }
 
 entity "DimPaymentMethod" as DimPaymentMethod <<D>> {
@@ -77,7 +90,6 @@ entity "DimTechnician" as DimTechnician <<D>> {
   + technician_id : int <<PK>>
   --
   technician_name : varchar
-  skill_level : varchar
 }
 
 
@@ -89,12 +101,12 @@ entity "FactTicketSales" as FactTicketSales <<F>> {
   + ticket_sales_id : int <<PK>>
   --
   date_id : int <<FK>>
-  train_id : int <<FK>>
-  route_id : int <<FK>>
-  passenger_id : int <<FK>>
+  train_sk : int <<FK>>
+  route_sk : int <<FK>>
+  passenger_sk : int <<FK>>
   payment_method_id : int <<FK>>
-  origin_station_id : int <<FK>>
-  destination_station_id : int <<FK>>
+  origin_station_sk : int <<FK>>
+  destination_station_sk : int <<FK>>
   --
   ticket_count : int
   revenue : decimal
@@ -109,8 +121,8 @@ entity "FactPassengerLoad" as FactPassengerLoad <<F>> {
   + passenger_load_id : int <<PK>>
   --
   date_id : int <<FK>>
-  train_id : int <<FK>>
-  route_id : int <<FK>>
+  train_sk : int <<FK>>
+  route_sk : int <<FK>>
   trip_id : int
   --
   passenger_count : int
@@ -127,10 +139,10 @@ entity "FactOperationalPerformance" as FactOperationalPerformance <<F>> {
   + operational_perf_id : int <<PK>>
   --
   date_id : int <<FK>>
-  train_id : int <<FK>>
-  route_id : int <<FK>>
-  origin_station_id : int <<FK>>
-  destination_station_id : int <<FK>>
+  train_sk : int <<FK>>
+  route_sk : int <<FK>>
+  origin_station_sk : int <<FK>>
+  destination_station_sk : int <<FK>>
   --
   scheduled_departure : datetime
   actual_departure : datetime
@@ -147,10 +159,11 @@ entity "FactOperationalPerformance" as FactOperationalPerformance <<F>> {
 ' ======================================
 
 entity "FactMaintenance" as FactMaintenance <<F>> {
-  + maintenance_id : int <<PK>>
+  + maintenance_sk : int <<PK>>
   --
+  maintenance_id : int
   date_id : int <<FK>>
-  train_id : int <<FK>>
+  train_sk : int <<FK>>
   component_id : int <<FK>>
   maintenance_type_id : int <<FK>>
   technician_id : int <<FK>>
