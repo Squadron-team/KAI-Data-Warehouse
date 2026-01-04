@@ -72,7 +72,6 @@ CREATE TABLE TRIP (
     schedule_id INT NOT NULL,
     actual_departure DATETIME,
     actual_arrival DATETIME,
-    delay_minutes INT DEFAULT 0,
     status VARCHAR(30),
 
     CONSTRAINT fk_trip_schedule

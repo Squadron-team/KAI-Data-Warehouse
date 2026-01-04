@@ -43,7 +43,6 @@ entity "Trip" as Trip {
   schedule_id : int <<FK>>
   actual_departure : datetime
   actual_arrival : datetime
-  delay_minutes : int
   status : varchar  // e.g. completed, cancelled, delayed
 }
 
